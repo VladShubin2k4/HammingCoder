@@ -17,7 +17,7 @@ int fastpow(int a, int n) {
 }
 
 void add_extra_nulls(string& s) {
-
+	while (s.length() % 11) s.push_back('0');
 }
 
 void remove_unused_symbols(string& s) {
