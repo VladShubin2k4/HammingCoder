@@ -38,23 +38,24 @@ void add_control_bits(string& s) {
 void calc_control_bits(string& s) {
 	for (int step = 0; step <= 3; ++step) {
 		int c = fastpow(2, step), cnt = 0;
-		for (int i = c + 1; i <= s.length(); ++i) {
-			if (i & c)
-				cnt += static_cast<int>(s[i-1]) - 48;
-		}
+		for (int i = c + 1; i <= s.length(); ++i) if (i & c) cnt += static_cast<int>(s[i - 1]) - 48;
+
 		s[static_cast<std::basic_string<char, std::char_traits<char>, std::allocator<char>>::size_type>(c) - 1] = static_cast<char>(48 + cnt % 2);
 	}
 }
 
+vector<string> process_segments(vector<string> codes) {
+	for (int i = 0; i < codes.size(); ++i)
+		calc_control_bits(codes[i]);
+	return codes;
+}
 
 vector<string> split_in_segments(const string& s) {
 	vector<string> segments;
-
 	for (int i = 0; i < s.length(); i += 11) {
 		segments.push_back(s.substr(i, 11));
 		add_control_bits(segments.back());
 	}
-
 	return segments;
 }
 
@@ -68,12 +69,15 @@ int main(){
 	ios::sync_with_stdio(false);
 	//fstream f("code.txt");
 	string code;
+
+	cout << "Input your code: ";
 	getline(cin, code);
+
 	remove_unused_symbols(code);
 	add_extra_nulls(code);
-	vector<string> codes = split_in_segments(code);
-	for (int i = 0; i < codes.size(); ++i)
-		calc_control_bits(codes[i]);
+
+	vector<string> codes = process_segments(split_in_segments(code));
+
 	code = vector_to_str(codes);
 	cout <<"Your code: "<< code;
 	return 0;
